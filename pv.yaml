@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: pv-class
   capacity:
-    storage: 100GB
+    storage: 100Gi
   accessModes:
     - ReadWriteOnce
   claimRef:
@@ -14,3 +14,15 @@ spec:
   gcePersistentDisk:
     pdName: pv-disk
     fsType: ext4
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
