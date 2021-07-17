@@ -1,0 +1,84 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: geth-service
+spec:
+  type: NodePort
+  selector:
+    app: geth
+  ports:
+  - name: discovery-tcp
+    port: 30303
+    protocol: TCP
+  - name: discovery
+    port: 30303
+    protocol: UDP
+  - name: rpc
+    port: 8545
+  - name: ws
+    port: 8546
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: pd-class
+provisioner: pd.csi.storage.gke.io
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+parameters:
+  type: pd-balanced
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: geth-deployment
+spec:
+  serviceName: geth-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: geth
+  template:
+    metadata:
+      labels:
+        app: geth
+    spec:
+      containers:
+      - name: geth
+        image: ethereum/client-go:v1.10.4
+        args:
+        - "--syncmode=fast"
+        - "--ipcpath=/home/geth.ipc"
+        - "--rinkeby"
+        - "--http.api=eth,net,web3,txpool"
+        - "--http"
+        - "--http.addr=0.0.0.0"
+        - "--http.port=8545"
+        - "--ws"
+        - "--ws.addr=0.0.0.0"
+        - "--ws.port=8546"
+        ports:
+        - name: rpc
+          containerPort: 8545
+        - name: ws
+          containerPort: 8546
+        - name: gethdiscovery
+          containerPort: 30303
+          protocol: UDP
+        - name: gethdiscovery2
+          containerPort: 30304
+        volumeMounts:
+          - name: geth-pvc
+            mountPath: /root/.ethereum/rinkeby
+      terminationGracePeriodSeconds: 60
+  volumeClaimTemplates:
+  - metadata:
+      name: geth-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "pd-class"
+      resources:
+        requests:
+          storage: 200Gi
+---

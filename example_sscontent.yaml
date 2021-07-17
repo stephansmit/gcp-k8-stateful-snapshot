@@ -1,0 +1,29 @@
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshotContent
+metadata:
+  creationTimestamp: "2021-07-07T18:05:54Z"
+  finalizers:
+  - snapshot.storage.kubernetes.io/volumesnapshotcontent-bound-protection
+  generation: 1
+  name: snapcontent-1488b43e-ce2a-47ce-af8e-7fd08643fe29
+  resourceVersion: "7247"
+  selfLink: /apis/snapshot.storage.k8s.io/v1beta1/volumesnapshotcontents/snapcontent-1488b43e-ce2a-47ce-af8e-7fd08643fe29
+  uid: 63ceb6ea-cc68-41b0-8775-c6d1ca403e4b
+spec:
+  deletionPolicy: Retain
+  driver: pd.csi.storage.gke.io
+  source:
+    volumeHandle: projects/kubernetes-helloworld-storage/zones/us-west1-a/disks/pvc-71773e04-fcac-45d2-94b6-81843540de31
+  volumeSnapshotClassName: snapshot-class
+  volumeSnapshotRef:
+    apiVersion: snapshot.storage.k8s.io/v1beta1
+    kind: VolumeSnapshot
+    name: snapshot
+    namespace: default
+    resourceVersion: "7127"
+    uid: 1488b43e-ce2a-47ce-af8e-7fd08643fe29
+status:
+  creationTime: 1625681155652000000
+  readyToUse: true
+  restoreSize: 6442450944
+  snapshotHandle: projects/kubernetes-helloworld-storage/global/snapshots/snapshot-1488b43e-ce2a-47ce-af8e-7fd08643fe29

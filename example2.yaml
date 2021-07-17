@@ -1,0 +1,32 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: podpvc
+spec:
+  dataSource:
+    name: snapshot
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard-rwo
+  resources:
+    requests:
+      storage: 6Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-server
+spec:
+  containers:
+   - name: web-server
+     image: nginx
+     volumeMounts:
+       - mountPath: /var/lib/www/html
+         name: mypvc
+  volumes:
+   - name: mypvc
+     persistentVolumeClaim:
+       claimName: podpvc
+       readOnly: false
